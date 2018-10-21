@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 module Pronto
-  describe Rubocop do
-    let(:rubocop) { Rubocop.new(patches) }
+  describe RubocopAutocorrect do
+    let(:rubocop) { RubocopAutocorrect.new(patches) }
     let(:patches) { nil }
 
     describe '#run' do

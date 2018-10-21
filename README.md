@@ -1,9 +1,7 @@
 # Pronto runner for Rubocop
 
-[![Code Climate](https://codeclimate.com/github/mmozuras/pronto-rubocop.png)](https://codeclimate.com/github/mmozuras/pronto-rubocop)
-[![Build Status](https://travis-ci.org/mmozuras/pronto-rubocop.png)](https://travis-ci.org/mmozuras/pronto-rubocop)
-[![Gem Version](https://badge.fury.io/rb/pronto-rubocop.png)](http://badge.fury.io/rb/pronto-rubocop)
-[![Dependency Status](https://gemnasium.com/mmozuras/pronto-rubocop.png)](https://gemnasium.com/mmozuras/pronto-rubocop)
+[![Build Status](https://travis-ci.org/ByJIKaHkaz/pronto-rubocop.svg?branch=master)](https://travis-ci.org/ByJIKaHkaz/pronto-rubocop)
+[![Gem Version](https://badge.fury.io/rb/pronto-rubocop-autocorrect.png)](https://badge.fury.io/rb/pronto-rubocop-autocorrect)
 
 Pronto runner for [Rubocop](https://github.com/bbatsov/rubocop), ruby code analyzer. [What is Pronto?](https://github.com/mmozuras/pronto)
 
@@ -17,3 +15,7 @@ You can also provide additional configuration via `.pronto.yml`:
     rubocop:
       # Auto-correct issues
       auto-correct: true
+
+## How it works?
+
+This gem patches only the modified lines in your source files. This means that the story does not deteriorate and not will happen unpleasant incidents as with rubocop -a

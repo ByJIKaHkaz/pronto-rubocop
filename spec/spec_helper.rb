@@ -1,6 +1,6 @@
 require 'rspec'
-require 'rspec/its'
-require 'pronto/rubocop'
+
+require 'pronto/rubocop-autocorrect'
 
 RSpec.configure do |config|
   config.expect_with(:rspec) { |c| c.syntax = :should }

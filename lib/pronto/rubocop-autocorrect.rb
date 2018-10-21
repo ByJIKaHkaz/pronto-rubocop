@@ -2,18 +2,16 @@ require 'pronto'
 require 'rubocop'
 
 module Pronto
-  class Rubocop < Runner
+  class RubocopAutocorrect < Runner
     def initialize(_, _ = nil)
       super
-
+      @auto_correct = true
       @config_store = ::RuboCop::ConfigStore.new
       if ENV['RUBOCOP_CONFIG']
         @config_store.options_config = ENV['RUBOCOP_CONFIG']
       end
-      @runner_config = Pronto::ConfigFile.new.to_h['rubocop'] || {}
-      options = {
-        autocorrect: @runner_config['auto-correct']
-      }
+
+      options = { auto_correct: @auto_correct }
       @inspector = ::RuboCop::Runner.new(options, @config_store)
     end
 
@@ -23,29 +21,27 @@ module Pronto
       messages = @patches.select { |patch| valid_patch?(patch) }
         .map { |patch| process(patch) }
         .flatten.compact
-
-      _add_corrected_message_total(messages) if @runner_config['auto-correct']
+      _add_corrected_message_total(messages) if @auto_correct
       messages
-    end
+   end
 
     def valid_patch?(patch)
       return false if patch.additions < 1
 
       config_store = config_store_for(patch)
       path = patch.new_file_full_path
-
       return false if config_store.file_to_exclude?(path.to_s)
       return true if config_store.file_to_include?(path.to_s)
 
       ruby_file?(path)
-    end
+   end
 
     def process(patch)
       processed_source = processed_source_for(patch)
       file = patch.delta.new_file[:path]
       offences = @inspector.send(:do_inspection_loop, file, processed_source)[1]
-      _messages_for_offences(offences)
-    end
+      _messages_for_offences(offences, patch)
+   end
 
     def new_message(offence, line)
       path = line.patch.delta.new_file[:path]
@@ -55,19 +51,18 @@ module Pronto
         message = "[Corrected] #{message}"
         level = :info
       end
-
       Message.new(path, line, level, message, nil, self.class)
-    end
+   end
 
     def config_store_for(patch)
       path = patch.new_file_full_path.to_s
       @config_store.for(path)
-    end
+   end
 
     def processed_source_for(patch)
       path = patch.new_file_full_path.to_s
       ::RuboCop::ProcessedSource.from_file(path, RUBY_VERSION[0..2].to_f)
-    end
+   end
 
     def level(severity)
       case severity
@@ -76,7 +71,7 @@ module Pronto
       when :warning, :error, :fatal
         severity
       end
-    end
+   end
 
     private
 
@@ -85,14 +80,14 @@ module Pronto
       total = "Total offenses: #{messages.size}   " \
         " Corrected: #{corrected_messages.size}"
       messages << Message.new(nil, nil, :info, total, nil, self.class)
-    end
+   end
 
-    def _messages_for_offences(offences)
+    def _messages_for_offences(offences, patch)
       offences.sort.reject(&:disabled?).map do |offence|
         patch.added_lines
           .select { |line| line.new_lineno == offence.line }
           .map { |line| new_message(offence, line) }
       end
-    end
+   end
   end
 end
