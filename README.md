@@ -5,6 +5,26 @@
 
 Pronto runner for [Rubocop](https://github.com/bbatsov/rubocop), ruby code analyzer. [What is Pronto?](https://github.com/mmozuras/pronto)
 
+## Install
+
+It's not mandatory to include gem into `Gemfile`
+
+```
+gem install pronto-rubocop-autocorrect
+```
+
+## Usage
+
+```
+pronto run -c origin/master
+```
+
+You also can ensure running before push inside `.git/hooks/pre-push`
+
+```
+pronto run -c $1/master --exit-code
+```
+
 ## Configuration
 
 Configuring Rubocop via .rubocop.yml will work just fine with pronto-rubocop.
